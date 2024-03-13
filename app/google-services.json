@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "85814072377",
+    "project_id": "scannerpos-ite5333",
+    "storage_bucket": "scannerpos-ite5333.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:85814072377:android:c704d1ca64c0c1bcd4e9e8",
+        "android_client_info": {
+          "package_name": "com.humber.barcodepos"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDFd3UloQWOQNlwUVojo-qIDeu0BqgBDB4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
