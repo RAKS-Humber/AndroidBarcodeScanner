@@ -48,30 +48,14 @@ public class MainActivity extends AppCompatActivity {
     private ImageAnalysis analysisUseCase;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
+    private String x;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         previewView = findViewById(R.id.previewView);
-
-        DocumentReference docRef = db.collection("orders").document("012044038925");
-        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if (document.exists()) {
-                        Log.d("Firebase", "DocumentSnapshot data: " + document.getData());
-                    } else {
-                        Log.d(TAG, "No such document");
-                    }
-                } else {
-                    Log.d(TAG, "get failed with ", task.getException());
-                }
-            }
-        });
-
     }
 
     @Override
@@ -213,12 +197,12 @@ public class MainActivity extends AppCompatActivity {
 
     private void onSuccessListener(List<Barcode> barcodes) {
         if (barcodes.size() > 0) {
-            Toast.makeText(this, barcodes.get(0).getDisplayValue(), Toast.LENGTH_SHORT).show();
 
             DocumentReference docRef = db.collection("orders").document(Objects.requireNonNull(barcodes.get(0).getDisplayValue()));
             docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    Log.d(TAG, "Hello");
                     if (task.isSuccessful()) {
                         DocumentSnapshot document = task.getResult();
                         if (document.exists()) {
@@ -231,9 +215,9 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             });
+//            Toast.makeText(this, x, Toast.LENGTH_SHORT).show();
             //finish();
             closeCamera();
-
         }
     }
 }
