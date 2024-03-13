@@ -23,6 +23,6 @@ We have implemented the databse using firestore. We have a products collection a
 [ ] Generate pdf on make payment.
 
 
-To use the app, install it on a device with camera and scan the below provided barcode. Right now we only have one barcode in the database but this is to test the working of the barcode and the firestore database.
+To use the app, install it on a device with camera and scan the below provided barcode. Right now we only have one barcode in the database but this is to test the working of the barcode and the firestore database. Check LogCat for data info such as name, price, isTaxable.
 
 ![IMG_1313](https://github.com/RAKS-Humber/AndroidBarcodeScanner/assets/46134664/a3d969ab-067b-47a6-8c61-945b917ebd5d)
