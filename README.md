@@ -12,6 +12,8 @@ We have provided the PreviewView as the input to the InputImage which is passed 
 
 [x] Fetch data for the barcode from firestore.
 
+We have implemented the databse using firestore. We have a products collection and orders collection. Products stores the information of individual products sold in the store and Orders stores order history.
+
 [ ] Add recieved product info based on barcode to a list.
 
 [ ] Pass data to a new activity for checkout.
@@ -21,3 +23,6 @@ We have provided the PreviewView as the input to the InputImage which is passed 
 [ ] Generate pdf on make payment.
 
 
+To use the app, install it on a device with camera and scan the below provided barcode. Right now we only have one barcode in the database but this is to test the working of the barcode and the firestore database.
+
+![IMG_1313](https://github.com/RAKS-Humber/AndroidBarcodeScanner/assets/46134664/a3d969ab-067b-47a6-8c61-945b917ebd5d)
