@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -25,12 +26,26 @@ import com.google.mlkit.vision.barcode.BarcodeScanning;
 import com.google.mlkit.vision.barcode.common.Barcode;
 import com.google.mlkit.vision.common.InputImage;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 public class MainActivity extends AppCompatActivity {
+
+    private Timer scanTimer = new Timer();
+
+
+    ArrayList<String> al=new ArrayList<String>();
+
+    private boolean isProcessing = false;
+    private boolean isScanningEnabled = true;
+
+    private long SCAN_DELAY = 2000;
+
 
     private static final String TAG = "MLKit Barcode";
     private static final int PERMISSION_CODE = 1001;
@@ -41,17 +56,23 @@ public class MainActivity extends AppCompatActivity {
     private Preview previewUseCase;
     private ImageAnalysis analysisUseCase;
 
+    TextView tv;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         previewView = findViewById(R.id.previewView);
+        tv=findViewById(R.id.textView);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        startCamera();
+        if (isScanningEnabled) {
+            startCamera();
+            isScanningEnabled = false; // Prevent starting the camera again until the delay is over
+        }
     }
 
     public void startCamera() {
@@ -161,21 +182,54 @@ public class MainActivity extends AppCompatActivity {
 
     @SuppressLint("UnsafeOptInUsageError")
     private void analyze(@NonNull ImageProxy image) {
-        if (image.getImage() == null) return;
+        System.out.println("Analyze Called");
+        System.out.println(isProcessing);
+        System.out.println(image.getImage()==null);
+        if (isProcessing || image.getImage() == null) {
+            image.close();
+            return;
+        }
+
+        isProcessing = true;
+
+
+        //if (image.getImage() == null) return;
 
         InputImage inputImage = InputImage.fromMediaImage(
                 image.getImage(),
                 image.getImageInfo().getRotationDegrees()
         );
 
-        BarcodeScanner barcodeScanner = BarcodeScanning.getClient();
+       BarcodeScanner barcodeScanner = BarcodeScanning.getClient();
 
-        barcodeScanner.process(inputImage)
+         /*barcodeScanner.process(inputImage)
                 .addOnSuccessListener(this::onSuccessListener)
                 .addOnFailureListener(e -> Log.e(TAG, "Barcode process failure", e))
-                .addOnCompleteListener(task -> image.close());
+                .addOnCompleteListener(task -> image.close());*/
+
+        barcodeScanner.process(inputImage)
+                .addOnSuccessListener(barcodes -> {
+                    onSuccessListener(barcodes);
+                    startScanDelay();
+                    image.close();
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Barcode process failure", e);
+                    startScanDelay();
+                    image.close();
+                });
     }
 
+
+    private void startScanDelay() {
+        scanTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                isProcessing = false;
+                isScanningEnabled = true; // Allow scanning again after the delay
+            }
+        }, SCAN_DELAY);
+    }
 
     private void closeCamera() {
 
@@ -187,10 +241,17 @@ public class MainActivity extends AppCompatActivity {
 
     private void onSuccessListener(List<Barcode> barcodes) {
         if (barcodes.size() > 0) {
-            Toast.makeText(this, barcodes.get(0).getDisplayValue(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, barcodes.get(0).getDisplayValue(), Toast.LENGTH_LONG).show();
             //finish();
-            closeCamera();
+            //closeCamera();
+
+            al.add(barcodes.get(0).getDisplayValue());
 
         }
+
+        tv.setText(al.toString());
     }
+
+
+
 }
