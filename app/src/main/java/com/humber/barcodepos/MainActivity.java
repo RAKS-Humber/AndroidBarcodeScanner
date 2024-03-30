@@ -2,14 +2,12 @@ package com.humber.barcodepos;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.camera.core.CameraSelector;
 import androidx.camera.core.ImageAnalysis;
 import androidx.camera.core.ImageProxy;
@@ -18,6 +16,9 @@ import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.camera.view.PreviewView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -29,15 +30,21 @@ import com.google.mlkit.vision.barcode.BarcodeScanner;
 import com.google.mlkit.vision.barcode.BarcodeScanning;
 import com.google.mlkit.vision.barcode.common.Barcode;
 import com.google.mlkit.vision.common.InputImage;
+import com.humber.barcodepos.fragment.OrderListFragment;
+import com.humber.barcodepos.models.Order;
+import com.humber.barcodepos.models.Product;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-public class MainActivity extends AppCompatActivity {
 
+public class MainActivity extends FragmentActivity {
+
+    public static ArrayList<Product> mOrder = new ArrayList<Product>();
     private static final String TAG = "MLKit Barcode";
     private static final int PERMISSION_CODE = 1001;
     private static final String CAMERA_PERMISSION = Manifest.permission.CAMERA;
@@ -48,7 +55,6 @@ public class MainActivity extends AppCompatActivity {
     private ImageAnalysis analysisUseCase;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-    private String x;
 
 
     @Override
@@ -56,6 +62,15 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         previewView = findViewById(R.id.previewView);
+
+        FragmentManager fm = getSupportFragmentManager();
+        Fragment fragment = fm.findFragmentById(R.id.fragment_container);
+        if (fragment == null) {
+            fragment = OrderListFragment.newInstance();
+            fm.beginTransaction()
+                    .add(R.id.fragment_container, fragment)
+                    .commit();
+        }
     }
 
     @Override
@@ -206,7 +221,14 @@ public class MainActivity extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         DocumentSnapshot document = task.getResult();
                         if (document.exists()) {
-                            Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+                            Log.d(TAG, "DocumentSnapshot data: " + document.getData().get("isTaxable"));
+                            Product mProduct = new Product();
+                            mProduct.setName((String) document.getData().get("name"));
+                            mProduct.setPrice((Double) document.getData().get("price"));
+//                            mProduct.setBarcode(Integer.parseInt(barcodes.get(0).getDisplayValue()));
+                            mProduct.setTaxable((Boolean) document.getData().get("isTaxable"));
+                            mOrder.add(mProduct);
+                            Log.d(TAG, "Order: " + mOrder.get(0).getName());
                         } else {
                             Log.d(TAG, "No such document");
                         }
