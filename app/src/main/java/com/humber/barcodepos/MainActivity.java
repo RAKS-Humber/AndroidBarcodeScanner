@@ -30,6 +30,7 @@ import com.google.mlkit.vision.barcode.BarcodeScanner;
 import com.google.mlkit.vision.barcode.BarcodeScanning;
 import com.google.mlkit.vision.barcode.common.Barcode;
 import com.google.mlkit.vision.common.InputImage;
+import com.humber.barcodepos.adapter.OrderAdapter;
 import com.humber.barcodepos.fragment.OrderListFragment;
 import com.humber.barcodepos.models.Order;
 import com.humber.barcodepos.models.Product;
@@ -54,6 +55,7 @@ public class MainActivity extends FragmentActivity {
     private Preview previewUseCase;
     private ImageAnalysis analysisUseCase;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private OrderAdapter mAdapter;
 
 
 
@@ -228,6 +230,8 @@ public class MainActivity extends FragmentActivity {
 //                            mProduct.setBarcode(Integer.parseInt(barcodes.get(0).getDisplayValue()));
                             mProduct.setTaxable((Boolean) document.getData().get("isTaxable"));
                             mOrder.add(mProduct);
+
+                            mAdapter.notifyDataSetChanged();
                             Log.d(TAG, "Order: " + mOrder.get(0).getName());
                         } else {
                             Log.d(TAG, "No such document");
