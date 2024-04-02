@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/list_order_name_text_view"
+            android:textStyle="bold"
+            android:padding="4dp"
+            tools:text="@string/product_name">
+
+        </TextView>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/list_order_price_text_view"
+            android:textStyle="bold"
+            android:padding="4dp"
+            android:layout_toStartOf="@+id/list_order_name_text_view"
+            android:layout_below="@+id/list_order_barcode_text_view"
+            tools:text="@string/product_price">
+        </TextView>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/list_order_barcode_text_view"
+            android:textStyle="bold"
+            android:padding="4dp"
+            tools:text="@string/product_barcode">
+        </TextView>
+        
+    </RelativeLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -2,7 +2,6 @@ package com.humber.barcodepos;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,7 +9,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.camera.core.CameraSelector;
 import androidx.camera.core.ImageAnalysis;
 import androidx.camera.core.ImageProxy;
@@ -19,22 +17,34 @@ import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.camera.view.PreviewView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.mlkit.vision.barcode.BarcodeScanner;
 import com.google.mlkit.vision.barcode.BarcodeScanning;
 import com.google.mlkit.vision.barcode.common.Barcode;
 import com.google.mlkit.vision.common.InputImage;
+import com.humber.barcodepos.adapter.OrderAdapter;
+import com.humber.barcodepos.fragment.OrderListFragment;
+import com.humber.barcodepos.models.Order;
+import com.humber.barcodepos.models.Product;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-public class MainActivity extends AppCompatActivity {
 
     private Timer scanTimer = new Timer();
 
@@ -45,8 +55,9 @@ public class MainActivity extends AppCompatActivity {
     private boolean isScanningEnabled = true;
 
     private long SCAN_DELAY = 2000;
+public class MainActivity extends FragmentActivity {
 
-
+    public static ArrayList<Product> mOrder = new ArrayList<Product>();
     private static final String TAG = "MLKit Barcode";
     private static final int PERMISSION_CODE = 1001;
     private static final String CAMERA_PERMISSION = Manifest.permission.CAMERA;
@@ -55,6 +66,10 @@ public class MainActivity extends AppCompatActivity {
     private ProcessCameraProvider cameraProvider;
     private Preview previewUseCase;
     private ImageAnalysis analysisUseCase;
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private OrderAdapter mAdapter;
+
+
 
     TextView tv;
 
@@ -64,6 +79,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         previewView = findViewById(R.id.previewView);
         tv=findViewById(R.id.textView);
+        FragmentManager fm = getSupportFragmentManager();
+        Fragment fragment = fm.findFragmentById(R.id.fragment_container);
+        if (fragment == null) {
+            fragment = OrderListFragment.newInstance();
+            fm.beginTransaction()
+                    .add(R.id.fragment_container, fragment)
+                    .commit();
+        }
     }
 
     @Override
@@ -246,7 +269,35 @@ public class MainActivity extends AppCompatActivity {
             //closeCamera();
 
             al.add(barcodes.get(0).getDisplayValue());
+            DocumentReference docRef = db.collection("orders").document(Objects.requireNonNull(barcodes.get(0).getDisplayValue()));
+            docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    Log.d(TAG, "Hello");
+                    if (task.isSuccessful()) {
+                        DocumentSnapshot document = task.getResult();
+                        if (document.exists()) {
+                            Log.d(TAG, "DocumentSnapshot data: " + document.getData().get("isTaxable"));
+                            Product mProduct = new Product();
+                            mProduct.setName((String) document.getData().get("name"));
+                            mProduct.setPrice((Double) document.getData().get("price"));
+//                            mProduct.setBarcode(Integer.parseInt(barcodes.get(0).getDisplayValue()));
+                            mProduct.setTaxable((Boolean) document.getData().get("isTaxable"));
+                            mOrder.add(mProduct);
 
+                            mAdapter.notifyDataSetChanged();
+                            Log.d(TAG, "Order: " + mOrder.get(0).getName());
+                        } else {
+                            Log.d(TAG, "No such document");
+                        }
+                    } else {
+                        Log.d(TAG, "get failed with ", task.getException());
+                    }
+                }
+            });
+//            Toast.makeText(this, x, Toast.LENGTH_SHORT).show();
+            //finish();
+            closeCamera();
         }
 
         tv.setText(al.toString());
