@@ -5,6 +5,7 @@ import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -37,12 +38,23 @@ import com.humber.barcodepos.models.Product;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 
+    private Timer scanTimer = new Timer();
+
+
+    ArrayList<String> al=new ArrayList<String>();
+
+    private boolean isProcessing = false;
+    private boolean isScanningEnabled = true;
+
+    private long SCAN_DELAY = 2000;
 public class MainActivity extends FragmentActivity {
 
     public static ArrayList<Product> mOrder = new ArrayList<Product>();
@@ -59,12 +71,14 @@ public class MainActivity extends FragmentActivity {
 
 
 
+    TextView tv;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         previewView = findViewById(R.id.previewView);
-
+        tv=findViewById(R.id.textView);
         FragmentManager fm = getSupportFragmentManager();
         Fragment fragment = fm.findFragmentById(R.id.fragment_container);
         if (fragment == null) {
@@ -78,7 +92,10 @@ public class MainActivity extends FragmentActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        startCamera();
+        if (isScanningEnabled) {
+            startCamera();
+            isScanningEnabled = false; // Prevent starting the camera again until the delay is over
+        }
     }
 
     public void startCamera() {
@@ -188,21 +205,54 @@ public class MainActivity extends FragmentActivity {
 
     @SuppressLint("UnsafeOptInUsageError")
     private void analyze(@NonNull ImageProxy image) {
-        if (image.getImage() == null) return;
+        System.out.println("Analyze Called");
+        System.out.println(isProcessing);
+        System.out.println(image.getImage()==null);
+        if (isProcessing || image.getImage() == null) {
+            image.close();
+            return;
+        }
+
+        isProcessing = true;
+
+
+        //if (image.getImage() == null) return;
 
         InputImage inputImage = InputImage.fromMediaImage(
                 image.getImage(),
                 image.getImageInfo().getRotationDegrees()
         );
 
-        BarcodeScanner barcodeScanner = BarcodeScanning.getClient();
+       BarcodeScanner barcodeScanner = BarcodeScanning.getClient();
 
-        barcodeScanner.process(inputImage)
+         /*barcodeScanner.process(inputImage)
                 .addOnSuccessListener(this::onSuccessListener)
                 .addOnFailureListener(e -> Log.e(TAG, "Barcode process failure", e))
-                .addOnCompleteListener(task -> image.close());
+                .addOnCompleteListener(task -> image.close());*/
+
+        barcodeScanner.process(inputImage)
+                .addOnSuccessListener(barcodes -> {
+                    onSuccessListener(barcodes);
+                    startScanDelay();
+                    image.close();
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Barcode process failure", e);
+                    startScanDelay();
+                    image.close();
+                });
     }
 
+
+    private void startScanDelay() {
+        scanTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                isProcessing = false;
+                isScanningEnabled = true; // Allow scanning again after the delay
+            }
+        }, SCAN_DELAY);
+    }
 
     private void closeCamera() {
 
@@ -214,7 +264,11 @@ public class MainActivity extends FragmentActivity {
 
     private void onSuccessListener(List<Barcode> barcodes) {
         if (barcodes.size() > 0) {
+            Toast.makeText(this, barcodes.get(0).getDisplayValue(), Toast.LENGTH_LONG).show();
+            //finish();
+            //closeCamera();
 
+            al.add(barcodes.get(0).getDisplayValue());
             DocumentReference docRef = db.collection("orders").document(Objects.requireNonNull(barcodes.get(0).getDisplayValue()));
             docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
@@ -245,5 +299,10 @@ public class MainActivity extends FragmentActivity {
             //finish();
             closeCamera();
         }
+
+        tv.setText(al.toString());
     }
+
+
+
 }
