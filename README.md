@@ -1,7 +1,12 @@
 # Android Barcode Scanner
 ## This is a final project for ITE5333 Android App Development 1 course at Humber College. 
 
-[ ] Authentication with username and password.
+[x] Authentication with username and password.
+We have implemented the Authentication using FireBase Auth.
+We have imported the Firebase Auth libraries and provided the Internet Permissions.
+The application authenticates and user based on email id and password. 
+When you are running the application for the first time, you will need to register a new user.
+If user authentication is successful, the customers are allowed to add products by scanning the qr code.
 
 [x] Implementing barcode scanner using Google ML Kit.
 
@@ -12,13 +17,25 @@ We have provided the PreviewView as the input to the InputImage which is passed 
 
 [x] Fetch data for the barcode from firestore.
 
+
 We have implemented the databse using firestore. We have a products collection and orders collection. Products stores the information of individual products sold in the store and Orders stores order history.
 
-[ ] Add recieved product info based on barcode to a list.
+[X] Add recieved product info based on barcode to a list.
 
-[ ] Pass data to a new activity for checkout.
+We have implemented the barcode scanning which adds the products to the RecyclerView. 
+If the duplicate product is scanned multiple times, the application will update the quantity or it will add a new product to the list.
 
-[ ] Calculate subtotal and total.
+
+[x] Pass data to a new activity for checkout.
+
+Once the customer has scanned all the products, they can move to checkout to review their products with the associated cost for each product.
+
+[x] Calculate subtotal and total.
+
+The application calculates the amount based on the prices defined in our database for each products.
+The calcualtion depends on the quantity of each product added along with the type of the product. 
+If the product is set as taxable, an additional taxable amount is added to the total.
+
 
 [ ] Generate pdf on make payment.
 
