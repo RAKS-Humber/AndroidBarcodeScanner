@@ -1,28 +1,29 @@
 package com.humber.barcodepos.models;
 
 public class Product {
-    private int barcode;
+    private String barcode;
     private String name;
     private double price;
     private boolean isTaxable;
+    private int quantity;
 
     public Product() {
     }
-    public Product(int barcode, String name, double price, boolean isTaxable) {
+
+    public Product(String barcode, String name, double price, boolean isTaxable, int quantity) {
         this.barcode = barcode;
         this.name = name;
         this.price = price;
         this.isTaxable = isTaxable;
+        this.quantity = quantity;
     }
 
 
-
-
-    public int getBarcode() {
+    public String getBarcode() {
         return barcode;
     }
 
-    public void setBarcode(int barcode) {
+    public void setBarcode(String barcode) {
         this.barcode = barcode;
     }
 
@@ -51,6 +52,11 @@ public class Product {
     }
 
 
+    public int getQuantity() {
+        return quantity;
+    }
 
-
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
 }

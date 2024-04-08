@@ -1,5 +1,7 @@
 package com.humber.barcodepos;
 
+import static com.humber.barcodepos.MainActivity.mOrder;
+
 import android.media.Image;
 import android.os.Bundle;
 import android.util.Log;
@@ -23,13 +25,8 @@ public class CheckoutActivity extends AppCompatActivity {
         setContentView(R.layout.activity_checkout);
         ImageView back = findViewById(R.id.back_icon);
         ListView list = (ListView) findViewById(R.id.list_checkout);
-        ArrayList<Product> data = new ArrayList<Product>();
-        data.add(new Product(100, "Soap", 100.00, true));
-        data.add(new Product(102, "Pen", 2.00, false));
-        String TAG = "Sumedh_Debug";
-        Log.i(TAG, data.get(0).getName());
 
-        ArrayAdapter<Product> adapter = new CheckoutAdapter(this, R.layout.list_tile, data);
+        ArrayAdapter<Product> adapter = new CheckoutAdapter(this, R.layout.list_tile, mOrder);
         list.setAdapter(adapter);
 
         back.setOnClickListener(new View.OnClickListener(){

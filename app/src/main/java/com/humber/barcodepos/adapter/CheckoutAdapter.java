@@ -59,6 +59,8 @@ public class CheckoutAdapter extends ArrayAdapter<Product> {
         holder.barcode.setText(String.valueOf(item.getBarcode()));
         String dollarPrice = context.getString(R.string.dollar, item.getPrice());
         holder.price.setText(dollarPrice); // assuming getPrice() returns a float or double
+        String qty = context.getString(R.string.qty, item.getQuantity());
+        holder.quantity.setText(qty);
 
         return row;
     }

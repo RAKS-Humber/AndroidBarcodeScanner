@@ -9,6 +9,8 @@ import com.humber.barcodepos.R;
 import com.humber.barcodepos.models.Order;
 import com.humber.barcodepos.models.Product;
 
+import org.w3c.dom.Text;
+
 
 public class ProductHolder extends RecyclerView.ViewHolder{
 
@@ -17,6 +19,7 @@ public class ProductHolder extends RecyclerView.ViewHolder{
     private TextView mProductName;
     private TextView mBarcode;
     private TextView mProductPrice;
+    private TextView mQuantity;
 
     private Context context;
 
@@ -31,6 +34,7 @@ public class ProductHolder extends RecyclerView.ViewHolder{
                 itemView.findViewById(R.id.list_order_price_text_view);
         mBarcode = (TextView)
                 itemView.findViewById(R.id.list_order_barcode_text_view);
+        mQuantity = (TextView) itemView.findViewById(R.id.list_order_quantity_text_view);
 //        itemView.setOnClickListener(itemClickListener);
     }
 
@@ -38,6 +42,7 @@ public class ProductHolder extends RecyclerView.ViewHolder{
         mProduct = product;
         mProductName.setText(mProduct.getName());
         mProductPrice.setText(Double.toString(mProduct.getPrice()));
+        mQuantity.setText(String.valueOf(mProduct.getQuantity()));
         //mBarcode.setText(mProduct.getBarcode() );
         //mProductPrice.setText(mProduct.getBarcode());
     }

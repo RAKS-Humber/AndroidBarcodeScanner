@@ -46,7 +46,7 @@ public class OrderAdapter extends RecyclerView.Adapter<ProductHolder> {
     @Override
     public int getItemCount()
     {
-        System.out.println("PRoduct Count"+mOrder.size());
+        System.out.println("Product Count"+mOrder.size());
             return mOrder.size();
     }
 }

@@ -70,13 +70,14 @@ public class MainActivity extends FragmentActivity {
     private OrderAdapter mAdapter;
     OrderListFragment fragment;
     TextView tv;
+    Button btn_checkout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         previewView = findViewById(R.id.previewView);
-        tv=findViewById(R.id.textView);
+//        tv=findViewById(R.id.textView);
         FragmentManager fm = getSupportFragmentManager();
         fragment = (OrderListFragment) fm.findFragmentById(R.id.fragment_container);
         if (fragment == null) {
@@ -294,20 +295,28 @@ public class MainActivity extends FragmentActivity {
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                Log.d(TAG, "Hello");
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
-                        Log.d(TAG, "DocumentSnapshot data: " + document.getData().get("isTaxable"));
-                        Product mProduct = new Product();
-                        mProduct.setName((String) document.getData().get("name"));
-                        mProduct.setPrice((Double) document.getData().get("price"));
-//                            mProduct.setBarcode(Integer.parseInt(barcodes.get(0).getDisplayValue()));
-                        mProduct.setTaxable((Boolean) document.getData().get("isTaxable"));
-                        mOrder.add(mProduct);
+                        boolean alreadyExists = false;
+                        for (int i = 0; i < mOrder.size(); i++) {
+                            if(Objects.equals(mOrder.get(i).getBarcode(), product_id)){
+                                int tempQty = mOrder.get(i).getQuantity() + 1;
+                                mOrder.get(i).setQuantity(tempQty);
+                                alreadyExists = true;
+                                Log.d(TAG, String.valueOf(mOrder.get(i).getQuantity()));
+                            }
+                        }
+                        if (!alreadyExists) {
+                            Product mProduct = new Product();
+                            mProduct.setName((String) document.getData().get("name"));
+                            mProduct.setPrice((Double) document.getData().get("price"));
+                            mProduct.setBarcode(product_id);
+                            mProduct.setTaxable((Boolean) document.getData().get("isTaxable"));
+                            mOrder.add(mProduct);
+                        }
                         //Toast.makeText(this, "document exist", Toast.LENGTH_LONG).show();
                         fragment.mAdapter.notifyDataSetChanged();
-
 
                         //mAdapter.notifyDataSetChanged();
                         System.out.println("orders"+mOrder.get(0).getName());
