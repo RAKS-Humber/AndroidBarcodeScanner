@@ -6,6 +6,18 @@ public class Product {
     private double price;
     private boolean isTaxable;
 
+    public Product() {
+    }
+    public Product(int barcode, String name, double price, boolean isTaxable) {
+        this.barcode = barcode;
+        this.name = name;
+        this.price = price;
+        this.isTaxable = isTaxable;
+    }
+
+
+
+
     public int getBarcode() {
         return barcode;
     }

@@ -53,6 +53,7 @@ public class OrderListFragment extends Fragment{
             mAdapter = new OrderAdapter(getActivity(), mOrder);
             mOrderRecyclerView.setAdapter(mAdapter);
         } else {
+//            mAdapter
             mAdapter.notifyDataSetChanged();
         }
     }
