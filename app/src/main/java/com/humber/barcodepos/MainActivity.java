@@ -2,9 +2,13 @@ package com.humber.barcodepos;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,16 +50,12 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 
+
 public class MainActivity extends FragmentActivity {
     private Timer scanTimer = new Timer();
-
-    /*private OrderAdapter mAdapter;*/
-
     ArrayList<String> al=new ArrayList<String>();
-
     private boolean isProcessing = false;
     private boolean isScanningEnabled = true;
-
     private long SCAN_DELAY = 2000;
     public static ArrayList<Product> mOrder = new ArrayList<Product>();
     private static final String TAG = "MLKit Barcode";
@@ -68,9 +68,7 @@ public class MainActivity extends FragmentActivity {
     private ImageAnalysis analysisUseCase;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     private OrderAdapter mAdapter;
-
     OrderListFragment fragment;
-
     TextView tv;
 
     @Override
@@ -88,6 +86,15 @@ public class MainActivity extends FragmentActivity {
                     .add(R.id.fragment_container, fragment)
                     .commit();
         }
+        btn_checkout = findViewById(R.id.btn_checkout);
+        btn_checkout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, CheckoutActivity.class);
+//            intent.putExtra(EXTRA_CRIME_ID, mCrime.getId());
+                startActivity(intent);
+            }
+        });
     }
 
     @Override

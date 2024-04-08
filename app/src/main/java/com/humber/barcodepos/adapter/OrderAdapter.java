@@ -24,6 +24,10 @@ public class OrderAdapter extends RecyclerView.Adapter<ProductHolder> {
         this.context = context;
     }
 
+    public void setOrders(List<Product> order){
+        mOrder = order;
+    }
+
     @NonNull
     @Override
     public ProductHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
