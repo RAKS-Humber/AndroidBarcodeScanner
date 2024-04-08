@@ -68,9 +68,7 @@ public class MainActivity extends FragmentActivity {
     private ImageAnalysis analysisUseCase;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     private OrderAdapter mAdapter;
-    private Button btn_checkout;
-
-
+    OrderListFragment fragment;
     TextView tv;
 
     @Override
@@ -80,9 +78,10 @@ public class MainActivity extends FragmentActivity {
         previewView = findViewById(R.id.previewView);
         tv=findViewById(R.id.textView);
         FragmentManager fm = getSupportFragmentManager();
-        Fragment fragment = fm.findFragmentById(R.id.fragment_container);
+        fragment = (OrderListFragment) fm.findFragmentById(R.id.fragment_container);
         if (fragment == null) {
             fragment = OrderListFragment.newInstance();
+
             fm.beginTransaction()
                     .add(R.id.fragment_container, fragment)
                     .commit();
@@ -214,9 +213,9 @@ public class MainActivity extends FragmentActivity {
 
     @SuppressLint("UnsafeOptInUsageError")
     private void analyze(@NonNull ImageProxy image) {
-        System.out.println("Analyze Called");
-        System.out.println(isProcessing);
-        System.out.println(image.getImage()==null);
+        //System.out.println("Analyze Called");
+        //System.out.println(isProcessing);
+        //System.out.println(image.getImage()==null);
         if (isProcessing || image.getImage() == null) {
             image.close();
             return;
@@ -278,38 +277,50 @@ public class MainActivity extends FragmentActivity {
             //closeCamera();
 
             al.add(barcodes.get(0).getDisplayValue());
-            DocumentReference docRef = db.collection("orders").document(Objects.requireNonNull(barcodes.get(0).getDisplayValue()));
-            docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    Log.d(TAG, "Hello");
-                    if (task.isSuccessful()) {
-                        DocumentSnapshot document = task.getResult();
-                        if (document.exists()) {
-                            Log.d(TAG, "DocumentSnapshot data: " + document.getData().get("isTaxable"));
-                            Product mProduct = new Product();
-                            mProduct.setName((String) document.getData().get("name"));
-                            mProduct.setPrice((Double) document.getData().get("price"));
-//                            mProduct.setBarcode(Integer.parseInt(barcodes.get(0).getDisplayValue()));
-                            mProduct.setTaxable((Boolean) document.getData().get("isTaxable"));
-                            mOrder.add(mProduct);
-
-                            mAdapter.notifyDataSetChanged();
-                            Log.d(TAG, "Order: " + mOrder.get(0).getName());
-                        } else {
-                            Log.d(TAG, "No such document");
-                        }
-                    } else {
-                        Log.d(TAG, "get failed with ", task.getException());
-                    }
-                }
-            });
+            addProduct(barcodes.get(0).getDisplayValue());
 //            Toast.makeText(this, x, Toast.LENGTH_SHORT).show();
             //finish();
-            closeCamera();
+            //closeCamera();
         }
 
-        tv.setText(al.toString());
+        //tv.setText(al.toString());
+    }
+
+
+    public void addProduct(String product_id)
+    {
+        al.add(product_id);
+        DocumentReference docRef = db.collection("orders").document(Objects.requireNonNull(product_id));
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                Log.d(TAG, "Hello");
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        Log.d(TAG, "DocumentSnapshot data: " + document.getData().get("isTaxable"));
+                        Product mProduct = new Product();
+                        mProduct.setName((String) document.getData().get("name"));
+                        mProduct.setPrice((Double) document.getData().get("price"));
+//                            mProduct.setBarcode(Integer.parseInt(barcodes.get(0).getDisplayValue()));
+                        mProduct.setTaxable((Boolean) document.getData().get("isTaxable"));
+                        mOrder.add(mProduct);
+                        //Toast.makeText(this, "document exist", Toast.LENGTH_LONG).show();
+                        fragment.mAdapter.notifyDataSetChanged();
+
+
+                        //mAdapter.notifyDataSetChanged();
+                        System.out.println("orders"+mOrder.get(0).getName());
+                        Log.d(TAG, "Order: " + mOrder.get(0).getName());
+                    } else {
+                        System.out.println("********************No document*********");
+                        Log.d(TAG, "No such document");
+                    }
+                } else {
+                    Log.d(TAG, "get failed with ", task.getException());
+                }
+            }
+        });
     }
 
 

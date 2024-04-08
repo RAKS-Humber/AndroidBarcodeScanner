@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentResultListener;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -17,12 +18,14 @@ import com.humber.barcodepos.adapter.OrderAdapter;
 import com.humber.barcodepos.models.Product;
 import com.humber.barcodepos.models.Order;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
 public class OrderListFragment extends Fragment{
     private RecyclerView mOrderRecyclerView;
-    private OrderAdapter mAdapter;
+    public static final String REQUEST_ADD="100";
+    public OrderAdapter mAdapter;
    public OrderListFragment(){}
 
     @Override
@@ -33,6 +36,7 @@ public class OrderListFragment extends Fragment{
 
     public static OrderListFragment newInstance (){
         OrderListFragment fragment = new OrderListFragment();
+        /*fragment.mAdapter=mAdapter;*/
         return fragment;
     }
     @Nullable
@@ -47,14 +51,20 @@ public class OrderListFragment extends Fragment{
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    private void updateUI(){
+    public void updateUI(){
+       System.out.println("Updating the list"+MainActivity.mOrder.size());
         List<Product> mOrder = MainActivity.mOrder;
         if (mAdapter == null) {
+            System.out.println("ADD called");
+
             mAdapter = new OrderAdapter(getActivity(), mOrder);
             mOrderRecyclerView.setAdapter(mAdapter);
         } else {
-//            mAdapter
+            System.out.println("update called");
             mAdapter.notifyDataSetChanged();
         }
     }
+
+
+
 }
