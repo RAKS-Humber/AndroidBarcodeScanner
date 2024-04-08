@@ -38,7 +38,8 @@ public class ProductHolder extends RecyclerView.ViewHolder{
         mProduct = product;
         mProductName.setText(mProduct.getName());
         mProductPrice.setText(Double.toString(mProduct.getPrice()));
-        mProductPrice.setText(mProduct.getBarcode());
+        //mBarcode.setText(mProduct.getBarcode() );
+        //mProductPrice.setText(mProduct.getBarcode());
     }
 
 //    private final View.OnClickListener itemClickListener = new View.OnClickListener() {

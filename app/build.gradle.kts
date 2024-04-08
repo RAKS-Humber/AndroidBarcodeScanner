@@ -59,6 +59,7 @@ dependencies {
     implementation("com.google.mlkit:barcode-scanning:17.0.2")
 
     //    Firebase dependencies
+
     implementation(platform("com.google.firebase:firebase-bom:32.7.4"))
     implementation("com.google.firebase:firebase-firestore")
 }
