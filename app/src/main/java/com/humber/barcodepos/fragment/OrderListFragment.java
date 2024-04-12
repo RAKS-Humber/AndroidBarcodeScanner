@@ -52,8 +52,8 @@ public class OrderListFragment extends Fragment{
 
     @SuppressLint("NotifyDataSetChanged")
     public void updateUI(){
-       System.out.println("Updating the list"+MainActivity.mOrder.size());
-        List<Product> mOrder = MainActivity.mOrder;
+       System.out.println("Updating the list"+MainActivity.mOrder.getOrder().size());
+        List<Product> mOrder = MainActivity.mOrder.getOrder();
         if (mAdapter == null) {
             System.out.println("ADD called");
 

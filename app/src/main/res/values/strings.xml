@@ -12,18 +12,22 @@
     <string name="product_name">"Laptop"</string>
     <string name="product_price">"$0.00"</string>
     <string name="product_barcode">"0000000000"</string>
+    <string name="proceed_to_checkout">Proceed to Checkout</string>
+    <string name="proceed_to_payment">Proceed to Payment</string>
+    <string name="product">Product: %s</string>
+    <string name="dollar">Price: $ %.2f</string>
+    <string name="qty">Qty: %d</string>
+    <string name="checkout">Checkout</string>
     <string name="textview">TextView</string>
     <string name="login">Login</string>
     <string name="email">Email</string>
-
     <string name="register">Register</string>
     <string name="password">Password</string>
     <string name="click_to_login">Click to Login</string>
     <string name="click_to_register">Click to Register</string>
     <string name="logout">Logout</string>
-
-
-
-
-
+    <string name="AddProducts">Add Products To Cart</string>
+    <string name="subTotal">Sub Total:</string>
+    <string name="taxableTotal">Taxable Total:</string>
+    <string name="total">Total:</string>
 </resources>

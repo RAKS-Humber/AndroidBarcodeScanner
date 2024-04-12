@@ -2,6 +2,7 @@ package com.humber.barcodepos;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -51,18 +52,15 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 
+
 public class MainActivity extends FragmentActivity {
     private Timer scanTimer = new Timer();
-
-    /*private OrderAdapter mAdapter;*/
-
     ArrayList<String> al=new ArrayList<String>();
-
     private boolean isProcessing = false;
     private boolean isScanningEnabled = true;
-
     private long SCAN_DELAY = 2000;
-    public static ArrayList<Product> mOrder = new ArrayList<Product>();
+    public static Order mOrder = new Order();
+    public static ArrayList<Product> m1Order = new ArrayList<Product>();
     private static final String TAG = "MLKit Barcode";
     private static final int PERMISSION_CODE = 1001;
     private static final String CAMERA_PERMISSION = Manifest.permission.CAMERA;
@@ -73,17 +71,16 @@ public class MainActivity extends FragmentActivity {
     private ImageAnalysis analysisUseCase;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     private OrderAdapter mAdapter;
-
     OrderListFragment fragment;
-
-
     FirebaseAuth mAuth;
 
     FirebaseUser user;
 
     Button logoutBtn;
-
     TextView tv;
+    Button btn_checkout;
+
+    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,6 +94,7 @@ public class MainActivity extends FragmentActivity {
             finish();
         }
         setContentView(R.layout.activity_main);
+        context = this;
         previewView = findViewById(R.id.previewView);
         tv=findViewById(R.id.textView);
         logoutBtn=findViewById(R.id.logoutBtn);
@@ -119,6 +117,15 @@ public class MainActivity extends FragmentActivity {
                     .add(R.id.fragment_container, fragment)
                     .commit();
         }
+        btn_checkout = findViewById(R.id.btn_checkout);
+        btn_checkout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, CheckoutActivity.class);
+//            intent.putExtra(EXTRA_CRIME_ID, mCrime.getId());
+                startActivity(intent);
+            }
+        });
     }
 
     @Override
@@ -314,31 +321,44 @@ public class MainActivity extends FragmentActivity {
     public void addProduct(String product_id)
     {
         al.add(product_id);
-        DocumentReference docRef = db.collection("orders").document(Objects.requireNonNull(product_id));
+        DocumentReference docRef = db.collection("products").document(Objects.requireNonNull(product_id));
         docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                Log.d(TAG, "Hello");
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
-                        Log.d(TAG, "DocumentSnapshot data: " + document.getData().get("isTaxable"));
-                        Product mProduct = new Product();
-                        mProduct.setName((String) document.getData().get("name"));
-                        mProduct.setPrice((Double) document.getData().get("price"));
-//                            mProduct.setBarcode(Integer.parseInt(barcodes.get(0).getDisplayValue()));
-                        mProduct.setTaxable((Boolean) document.getData().get("isTaxable"));
-                        mOrder.add(mProduct);
-                        //Toast.makeText(this, "document exist", Toast.LENGTH_LONG).show();
+                        boolean alreadyExists = false;
+                        for (int i = 0; i < mOrder.getOrder().size(); i++) {
+                            if(Objects.equals(mOrder.getOrder().get(i).getBarcode(), product_id)){
+                                int tempQty = mOrder.getOrder().get(i).getQuantity() + 1;
+                                mOrder.getOrder().get(i).setQuantity(tempQty);
+                                mOrder.setSubTotal(mOrder.getSubTotal() + (Double) document.getData().get("price"));
+                                if((Boolean) document.getData().get("isTaxable")){
+                                    mOrder.setTaxableSubTotal(mOrder.getTaxableSubTotal() + (Double) document.getData().get("price"));
+                                }
+                                mOrder.setTotal(mOrder.getTaxableSubTotal() * mOrder.getTax() + (mOrder.getSubTotal() - mOrder.getTaxableSubTotal()));
+                                alreadyExists = true;
+                                Log.d(TAG, String.valueOf(mOrder.getOrder().get(i).getQuantity()));
+                            }
+                        }
+                        if (!alreadyExists) {
+                            Product mProduct = new Product();
+                            mProduct.setName((String) document.getData().get("name"));
+                            mProduct.setQuantity(1);
+                            mProduct.setPrice((Double) document.getData().get("price"));
+                            mProduct.setBarcode(product_id);
+                            mProduct.setTaxable((Boolean) document.getData().get("isTaxable"));
+                            mOrder.addProduct(mProduct);
+                            mOrder.setSubTotal(mOrder.getSubTotal() + (Double) document.getData().get("price"));
+                            if((Boolean) document.getData().get("isTaxable")){
+                                mOrder.setTaxableSubTotal(mOrder.getTaxableSubTotal() + (Double) document.getData().get("price"));
+                            }
+                            mOrder.setTotal(mOrder.getTaxableSubTotal() * mOrder.getTax() + (mOrder.getSubTotal() - mOrder.getTaxableSubTotal()));
+                        }
                         fragment.mAdapter.notifyDataSetChanged();
-
-
-                        //mAdapter.notifyDataSetChanged();
-                        System.out.println("orders"+mOrder.get(0).getName());
-                        Log.d(TAG, "Order: " + mOrder.get(0).getName());
                     } else {
-                        System.out.println("********************No document*********");
-                        Log.d(TAG, "No such document");
+                        Toast.makeText(context, "Product is not in our inventory!", Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     Log.d(TAG, "get failed with ", task.getException());

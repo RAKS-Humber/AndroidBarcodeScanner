@@ -24,6 +24,10 @@ public class OrderAdapter extends RecyclerView.Adapter<ProductHolder> {
         this.context = context;
     }
 
+    public void setOrders(List<Product> order){
+        mOrder = order;
+    }
+
     @NonNull
     @Override
     public ProductHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -42,7 +46,7 @@ public class OrderAdapter extends RecyclerView.Adapter<ProductHolder> {
     @Override
     public int getItemCount()
     {
-        System.out.println("PRoduct Count"+mOrder.size());
+        System.out.println("Product Count"+mOrder.size());
             return mOrder.size();
     }
 }
