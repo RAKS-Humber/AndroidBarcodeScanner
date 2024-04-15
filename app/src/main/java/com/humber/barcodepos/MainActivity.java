@@ -42,6 +42,7 @@ import com.humber.barcodepos.fragment.OrderListFragment;
 import com.humber.barcodepos.models.Order;
 import com.humber.barcodepos.models.Product;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
@@ -96,7 +97,7 @@ public class MainActivity extends FragmentActivity {
         setContentView(R.layout.activity_main);
         context = this;
         previewView = findViewById(R.id.previewView);
-        tv=findViewById(R.id.textView);
+        //tv=findViewById(R.id.textView);
         logoutBtn=findViewById(R.id.logoutBtn);
 
         logoutBtn.setOnClickListener(new View.OnClickListener() {
@@ -121,8 +122,14 @@ public class MainActivity extends FragmentActivity {
         btn_checkout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, CheckoutActivity.class);
-//            intent.putExtra(EXTRA_CRIME_ID, mCrime.getId());
+                //Intent intent = new Intent(MainActivity.this, CheckoutActivity.class);
+                //startActivity(intent);
+
+
+                Intent intent=new Intent(getApplicationContext(), ViewPaymentDetailsActivity.class);
+                Bundle extra = new Bundle();
+                List<Product> products=mOrder.getOrder();
+                intent.putExtra("productList", (Serializable) products);
                 startActivity(intent);
             }
         });

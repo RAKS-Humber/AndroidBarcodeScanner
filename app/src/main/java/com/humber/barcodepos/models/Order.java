@@ -1,9 +1,10 @@
 package com.humber.barcodepos.models;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Order {
+public class Order  implements Serializable {
     public Order() {
         this.order = new ArrayList<Product>();
         this.subTotal = 0.00;

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">BarcodePos</string>
+    <string name="app_name">Barcode Scanner</string>
     <string name="title_activity_login">LoginActivity</string>
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
@@ -30,4 +30,11 @@
     <string name="subTotal">Sub Total:</string>
     <string name="taxableTotal">Taxable Total:</string>
     <string name="total">Total:</string>
+    <string name="sr_no">Sr No.</string>
+    <string name="Name">Name</string>
+    <string name="Quantity">Quantity</string>
+    <string name="Price">Price</string>
+    <string name="TotalPrice">Total Price</string>
+    <string name="generate_invoice">Invoice</string>
+    <string name="home">Home</string>
 </resources>

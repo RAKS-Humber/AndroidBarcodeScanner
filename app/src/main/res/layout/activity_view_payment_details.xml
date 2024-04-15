@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ViewPaymentDetailsActivity"
+    android:stretchColumns="1,2,3,4"
+    android:layout_margin="8dp">
+
+    <TableRow>
+
+        <TextView
+            android:text="@string/Name"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:padding="10dp"
+            android:gravity="center"
+            android:layout_column="1"/>
+        <TextView
+            android:text="@string/Quantity"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:padding="10dp"
+            android:gravity="center"
+            android:layout_column="1"/>
+        <TextView
+            android:text="@string/Price"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:padding="10dp"
+            android:gravity="center"
+            android:layout_column="1"/>
+        <TextView
+            android:text="@string/TotalPrice"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:padding="10dp"
+            android:gravity="center"
+            android:layout_column="1"/>
+
+    </TableRow>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/products_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <LinearLayout android:layout_gravity="center"
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/btn_checkout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/purple"
+            android:paddingHorizontal="8dp"
+            android:text="@string/proceed_to_payment">
+
+
+        </Button>
+
+
+
+
+    </LinearLayout>
+
+</TableLayout>
