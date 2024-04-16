@@ -44,7 +44,15 @@ public class PaymentAdapter extends RecyclerView.Adapter<PaymentAdapter.ViewHold
             System.out.println("Product Inside Payment Adapter"+productsList.size());
             Product product=productsList.get(position);
             //holder.sr_no_tv.setText("0");
-            holder.product_name_tv.setText(product.getName());
+            if(product.getName().length()>8)
+            {
+                holder.product_name_tv.setText(product.getName().substring(0,10).concat(" ..."));
+            }
+            else
+            {
+                holder.product_name_tv.setText(product.getName());
+            }
+
             holder.product_quantity_tv.setText(String.valueOf(product.getQuantity()));
             holder.product_price_tv.setText(String.format("%.2f",product.getPrice()));
             double total_price=0.0f;

@@ -76,9 +76,9 @@ public class CheckoutActivity extends AppCompatActivity {
         ArrayAdapter<Product> adapter = new CheckoutAdapter(this, R.layout.list_tile, mOrder.getOrder());
         list.setAdapter(adapter);
 
-        subTotal.setText(String.valueOf(mOrder.getSubTotal()));
-        taxableTotal.setText(String.valueOf(mOrder.getTaxableSubTotal()));
-        total.setText(String.valueOf(mOrder.getTotal()));
+        subTotal.setText(String.format("%.2f",mOrder.getSubTotal()));
+        taxableTotal.setText(String.format("%.2f",mOrder.getTaxableSubTotal()));
+        total.setText(String.format("%.2f",mOrder.getTotal()));
 
 
         back.setOnClickListener(new View.OnClickListener(){
@@ -97,10 +97,11 @@ public class CheckoutActivity extends AppCompatActivity {
                     try {
                         createPDF(Invoice_number,products);
                         Invoice_number++;
-                        Intent intent=new Intent(getApplicationContext(), MainActivity.class);
-                        mOrder=new Order();
-                        startActivity(intent);
-                        finish();
+
+
+                        //mOrder=new Order();
+                        //finish();
+
                     } catch (FileNotFoundException e) {
 
                         throw new RuntimeException(e);
@@ -235,6 +236,7 @@ public class CheckoutActivity extends AppCompatActivity {
         productsTable.addCell(new Cell().add(new Paragraph("Product Price").setFontColor(ColorConstants.WHITE)).setBackgroundColor(invoiceGreen));
         productsTable.addCell(new Cell().add(new Paragraph("Total Price").setFontColor(ColorConstants.WHITE)).setBackgroundColor(invoiceGreen));
         double totalPrice=0.0f;
+        double taxableAmount=0.0f;
         for(int i=0;i<products.size();i++)
         {
             productsTable.addCell(new Cell().add(new Paragraph(String.valueOf(i+1))).setBackgroundColor(invoiceGray));
@@ -243,27 +245,31 @@ public class CheckoutActivity extends AppCompatActivity {
             productsTable.addCell(new Cell().add(new Paragraph(String.valueOf(products.get(i).getPrice()))).setBackgroundColor(invoiceGray));
             productsTable.addCell(new Cell().add(new Paragraph(String.valueOf(products.get(i).getQuantity()*products.get(i).getPrice()))).setBackgroundColor(invoiceGray));
             totalPrice=totalPrice+products.get(i).getQuantity()*products.get(i).getPrice();
+            if(products.get(i).getTaxable())
+            {
+                taxableAmount=taxableAmount+(products.get(i).getQuantity()*products.get(i).getPrice());
+            }
         }
 
         productsTable.addCell(new Cell().add(new Paragraph("")).setBorder(Border.NO_BORDER));
         productsTable.addCell(new Cell().add(new Paragraph("")).setBorder(Border.NO_BORDER));
         productsTable.addCell(new Cell().add(new Paragraph("")).setBorder(Border.NO_BORDER));
         productsTable.addCell(new Cell().add(new Paragraph("Sub-total").setFontColor(ColorConstants.WHITE)).setBackgroundColor(invoiceGreen));
-        productsTable.addCell(new Cell().add(new Paragraph(String.valueOf(totalPrice)).setFontColor(ColorConstants.WHITE)).setBackgroundColor(invoiceGreen));
+        productsTable.addCell(new Cell().add(new Paragraph(String.format("%.2f",totalPrice)).setFontColor(ColorConstants.WHITE)).setBackgroundColor(invoiceGreen));
 
 
 
         productsTable.addCell(new Cell().add(new Paragraph("")).setBorder(Border.NO_BORDER));
         productsTable.addCell(new Cell().add(new Paragraph("")).setBorder(Border.NO_BORDER));
         productsTable.addCell(new Cell().add(new Paragraph("")).setBorder(Border.NO_BORDER));
-        productsTable.addCell(new Cell().add(new Paragraph("Tax(13%)").setFontColor(ColorConstants.WHITE)).setBackgroundColor(invoiceGreen));
-        productsTable.addCell(new Cell().add(new Paragraph(String.valueOf(0.13*totalPrice)).setFontColor(ColorConstants.WHITE)).setBackgroundColor(invoiceGreen));
+        productsTable.addCell(new Cell().add(new Paragraph("TaxableAmount(13%)").setFontColor(ColorConstants.WHITE)).setBackgroundColor(invoiceGreen));
+        productsTable.addCell(new Cell().add(new Paragraph(String.format("%.2f",taxableAmount)).setFontColor(ColorConstants.WHITE)).setBackgroundColor(invoiceGreen));
 
         productsTable.addCell(new Cell().add(new Paragraph("")).setBorder(Border.NO_BORDER));
         productsTable.addCell(new Cell().add(new Paragraph("")).setBorder(Border.NO_BORDER));
         productsTable.addCell(new Cell().add(new Paragraph("")).setBorder(Border.NO_BORDER));
         productsTable.addCell(new Cell().add(new Paragraph("Grand Total").setBold().setFontSize(16).setFontColor(ColorConstants.WHITE)).setBackgroundColor(invoiceGreen));
-        productsTable.addCell(new Cell().add(new Paragraph(String.valueOf(totalPrice+(0.13*totalPrice))).setBold().setFontSize(16).setFontColor(ColorConstants.WHITE)).setBackgroundColor(invoiceGreen));
+        productsTable.addCell(new Cell().add(new Paragraph(String.format("%.2f",totalPrice+(0.13*taxableAmount))).setBold().setFontSize(16).setFontColor(ColorConstants.WHITE)).setBackgroundColor(invoiceGreen));
         //pdfDocument.add(table);
 
         float columnWidthContactUS[]={50,250,260};

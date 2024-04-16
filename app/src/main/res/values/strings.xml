@@ -9,8 +9,8 @@
     <string name="invalid_username">Not a valid username</string>
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
-    <string name="product_name">"Laptop"</string>
-    <string name="product_price">"$0.00"</string>
+    <string name="product_name">Name</string>
+    <string name="product_price">Price</string>
     <string name="product_barcode">"0000000000"</string>
     <string name="proceed_to_checkout">Proceed to Checkout</string>
     <string name="proceed_to_payment">Proceed to Payment</string>
@@ -37,4 +37,6 @@
     <string name="TotalPrice">Total Price</string>
     <string name="generate_invoice">Invoice</string>
     <string name="home">Home</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="product_quantity">Quantity</string>
 </resources>

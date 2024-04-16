@@ -1,6 +1,8 @@
 package com.humber.barcodepos;
 
 
+import static com.humber.barcodepos.MainActivity.mOrder;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -31,10 +33,10 @@ public class ViewPaymentDetailsActivity extends AppCompatActivity {
     Button proceedToPaymentBtn;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
 
 
         setContentView(R.layout.activity_view_payment_details);

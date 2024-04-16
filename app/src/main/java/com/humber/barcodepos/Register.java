@@ -21,7 +21,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class Register extends AppCompatActivity {
 
-    TextInputEditText emailText,passwordText;
+    TextInputEditText emailText,passwordText,confirmPasswordText;
 
     TextView loginNow;
 
@@ -55,6 +55,7 @@ public class Register extends AppCompatActivity {
         registerBtn=findViewById(R.id.registerButton);
         progressBar=findViewById(R.id.progress_bar);
         loginNow=findViewById(R.id.loginNow);
+        confirmPasswordText=findViewById(R.id.verify_password);
 
         loginNow.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -68,49 +69,92 @@ public class Register extends AppCompatActivity {
         registerBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                progressBar.setVisibility(View.VISIBLE);
+                //progressBar.setVisibility(View.VISIBLE);
                 String email=emailText.getText().toString();
                 String pass=passwordText.getText().toString();
+                String confirmPass=confirmPasswordText.getText().toString();
+
 
                 if(TextUtils.isEmpty(email))
                 {
                     Toast.makeText(Register.this,"Enter Email",Toast.LENGTH_SHORT).show();
+                    emailText.setText("");
+                    emailText.requestFocus();
+
                     return;
                 }
                 if(TextUtils.isEmpty(pass))
                 {
                     Toast.makeText(Register.this,"Enter Password",Toast.LENGTH_SHORT).show();
+                    passwordText.setText("");
+                    passwordText.requestFocus();
+                    return;
+                }
+                if(!pass.equals(confirmPass))
+                {
+
+                    Toast.makeText(Register.this,"Password Should Match",Toast.LENGTH_SHORT).show();
+                    passwordText.setText("");
+                    confirmPasswordText.setText("");
+                    passwordText.requestFocus();
                     return;
                 }
 
 
-                mAuth.createUserWithEmailAndPassword(email, pass)
-                        .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                progressBar.setVisibility(View.GONE);
-                                if (task.isSuccessful()) {
-                                    // Sign in success, update UI with the signed-in user's information
 
-                                    FirebaseUser user = mAuth.getCurrentUser();
-                                    Toast.makeText(Register.this, "Account Created.",
-                                            Toast.LENGTH_SHORT).show();
-                                    //Intent intent=new Intent(getApplicationContext(), Login.class);
-                                    //startActivity(intent);
-                                    //finish();
+                    mAuth.createUserWithEmailAndPassword(email, pass)
+                            .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                                @Override
+                                public void onComplete(@NonNull Task<AuthResult> task) {
+                                    //progressBar.setVisibility(View.GONE);
 
-                                } else {
-                                    // If sign in fails, display a message to the user.
+                                        if (task.isSuccessful()) {
+                                            // Sign in success, update UI with the signed-in user's information
 
-                                    Toast.makeText(Register.this, "Authentication failed.",
-                                            Toast.LENGTH_SHORT).show();
+                                            FirebaseUser user = mAuth.getCurrentUser();
+                                            Toast.makeText(Register.this, "Account Created.",
+                                                    Toast.LENGTH_SHORT).show();
+                                            Intent intent=new Intent(getApplicationContext(), Login.class);
+                                            startActivity(intent);
+                                            finish();
 
-                                }
-                            }
-                        });
+                                        } else {
+                                            // If sign in fails, display a message to the user.
+                                            Exception e=task.getException();
+                                            if(e!=null)
+                                            {
+                                                if(e instanceof com.google.firebase.auth.FirebaseAuthUserCollisionException) {
+                                                    Toast.makeText(Register.this, "Email is already in use. Please use a different email address.",
+                                                            Toast.LENGTH_SHORT).show();
+                                                }
+                                                else {
+                                                    Toast.makeText(Register.this, "Authentication failed." + e.getMessage(),
+                                                            Toast.LENGTH_SHORT).show();
+                                                }
+                                            }
+                                            else
+                                            {
+                                                Toast.makeText(Register.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
+                                            }
+                                            }
 
-            }
+
+
+
+                                        }
+
+
+
+
+
+                            });
+                }
+
+
+
         });
 
     }
+
+
 }
