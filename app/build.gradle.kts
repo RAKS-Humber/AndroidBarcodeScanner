@@ -63,4 +63,12 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:32.7.4"))
     implementation("com.google.firebase:firebase-firestore")
     implementation("com.google.firebase:firebase-auth:22.3.1")
+
+    //PDF Creation
+    implementation("com.itextpdf:itext7-core:7.1.15")
+
+
+
+
+
 }

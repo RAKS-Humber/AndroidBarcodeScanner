@@ -21,9 +21,12 @@
             android:layout_toEndOf="@+id/back_icon"
             android:textSize="18sp"
             android:text="@string/AddProducts"/>
+
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
+
 
     </RelativeLayout>
 </RelativeLayout>
