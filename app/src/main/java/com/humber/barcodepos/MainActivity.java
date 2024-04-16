@@ -142,6 +142,7 @@ public class MainActivity extends FragmentActivity {
                 List<Product> products=mOrder.getOrder();
                 intent.putExtra("productList", (Serializable) products);
                 startActivity(intent);
+
             }
         });
     }

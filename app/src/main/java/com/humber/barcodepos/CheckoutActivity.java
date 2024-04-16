@@ -1,5 +1,6 @@
 package com.humber.barcodepos;
 
+import static com.humber.barcodepos.MainActivity.m1Order;
 import static com.humber.barcodepos.MainActivity.mOrder;
 
 import android.Manifest;
@@ -97,10 +98,11 @@ public class CheckoutActivity extends AppCompatActivity {
                     try {
                         createPDF(Invoice_number,products);
                         Invoice_number++;
+                        Intent intent = new Intent(CheckoutActivity.this, MainActivity.class);
 
-
-                        //mOrder=new Order();
-                        //finish();
+                        mOrder=new Order();
+                        m1Order=new ArrayList<Product>();
+                        finish();
 
                     } catch (FileNotFoundException e) {
 

@@ -39,4 +39,6 @@
     <string name="home">Home</string>
     <string name="confirm_password">Confirm Password</string>
     <string name="product_quantity">Quantity</string>
+    <string name="minus">remove quantity</string>
+    <string name="plus">add quantity</string>
 </resources>

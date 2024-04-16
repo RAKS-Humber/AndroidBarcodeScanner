@@ -83,6 +83,13 @@ public class Register extends AppCompatActivity {
 
                     return;
                 }
+                if(!email.contains("@")|| !email.contains("."))
+                {
+                    Toast.makeText(Register.this,"Enter Valid Email",Toast.LENGTH_SHORT).show();
+                    emailText.setText("");
+                    emailText.requestFocus();
+                    return;
+                }
                 if(TextUtils.isEmpty(pass))
                 {
                     Toast.makeText(Register.this,"Enter Password",Toast.LENGTH_SHORT).show();

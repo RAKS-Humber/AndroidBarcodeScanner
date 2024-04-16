@@ -82,6 +82,13 @@ public class Login extends AppCompatActivity {
                     emailText.requestFocus();
                     return;
                 }
+                if(!email.contains("@")|| !email.contains("."))
+                {
+                    Toast.makeText(Login.this,"Enter Valid Email",Toast.LENGTH_SHORT).show();
+                    emailText.setText("");
+                    emailText.requestFocus();
+                    return;
+                }
                 if(TextUtils.isEmpty(pass))
                 {
                     Toast.makeText(Login.this,"Enter Password",Toast.LENGTH_SHORT).show();

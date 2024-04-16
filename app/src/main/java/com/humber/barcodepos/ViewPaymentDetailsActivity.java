@@ -51,16 +51,11 @@ public class ViewPaymentDetailsActivity extends AppCompatActivity {
         proceedToPaymentBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-
                 Intent intent = new Intent(ViewPaymentDetailsActivity.this, CheckoutActivity.class);
                 List<Product> products=MainActivity.mOrder.getOrder();
                 intent.putExtra("productList", (Serializable) products);
                 startActivity(intent);
-
-
-
-
+                finish();
             }
         });
 
