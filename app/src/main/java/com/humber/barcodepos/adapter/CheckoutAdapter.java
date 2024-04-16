@@ -38,6 +38,7 @@ public class CheckoutAdapter extends ArrayAdapter<Product> {
         View row = convertView;
         ProductHolder holder;
 
+
         if (row == null) {
             LayoutInflater inflater = LayoutInflater.from(context);
             row = inflater.inflate(layoutResourceId, parent, false);

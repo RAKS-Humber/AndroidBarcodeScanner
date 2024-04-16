@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -21,7 +20,6 @@ import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.camera.view.PreviewView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 
@@ -37,7 +35,6 @@ import com.google.mlkit.vision.barcode.BarcodeScanner;
 import com.google.mlkit.vision.barcode.BarcodeScanning;
 import com.google.mlkit.vision.barcode.common.Barcode;
 import com.google.mlkit.vision.common.InputImage;
-import com.humber.barcodepos.adapter.OrderAdapter;
 import com.humber.barcodepos.fragment.OrderListFragment;
 import com.humber.barcodepos.models.Order;
 import com.humber.barcodepos.models.Product;
@@ -54,13 +51,11 @@ import java.util.concurrent.Executors;
 
 
 public class MainActivity extends FragmentActivity {
-    private Timer scanTimer = new Timer();
+    private final Timer scanTimer = new Timer();
     ArrayList<String> al=new ArrayList<String>();
     private boolean isProcessing = false;
     private boolean isScanningEnabled = true;
-    private long SCAN_DELAY = 2000;
     public static Order mOrder = new Order();
-    public static ArrayList<Product> m1Order = new ArrayList<Product>();
     private static final String TAG = "MLKit Barcode";
     private static final int PERMISSION_CODE = 1001;
     private static final String CAMERA_PERMISSION = Manifest.permission.CAMERA;
@@ -70,14 +65,12 @@ public class MainActivity extends FragmentActivity {
     private Preview previewUseCase;
     private ImageAnalysis analysisUseCase;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private OrderAdapter mAdapter;
     OrderListFragment fragment;
     FirebaseAuth mAuth;
 
     FirebaseUser user;
 
     Button logoutBtn;
-    TextView tv;
     Button btn_checkout;
 
     private Context context;
@@ -96,18 +89,17 @@ public class MainActivity extends FragmentActivity {
         setContentView(R.layout.activity_main);
         context = this;
         previewView = findViewById(R.id.previewView);
-        tv=findViewById(R.id.textView);
-        logoutBtn=findViewById(R.id.logoutBtn);
-
-        logoutBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FirebaseAuth.getInstance().signOut();
-                Intent intent=new Intent(getApplicationContext(), Login.class);
-                startActivity(intent);
-                finish();
-            }
-        });
+//        logoutBtn=findViewById(R.id.logoutBtn);
+//
+//        logoutBtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                FirebaseAuth.getInstance().signOut();
+//                Intent intent=new Intent(getApplicationContext(), Login.class);
+//                startActivity(intent);
+//                finish();
+//            }
+//        });
         FragmentManager fm = getSupportFragmentManager();
         fragment = (OrderListFragment) fm.findFragmentById(R.id.fragment_container);
         if (fragment == null) {
@@ -284,6 +276,7 @@ public class MainActivity extends FragmentActivity {
 
 
     private void startScanDelay() {
+        long SCAN_DELAY = 2000;
         scanTimer.schedule(new TimerTask() {
             @Override
             public void run() {
@@ -293,25 +286,11 @@ public class MainActivity extends FragmentActivity {
         }, SCAN_DELAY);
     }
 
-    private void closeCamera() {
-
-        cameraProvider.unbindAll();
-
-        //cameraProvider.close();
-    }
-
-
     private void onSuccessListener(List<Barcode> barcodes) {
         if (barcodes.size() > 0) {
             Toast.makeText(this, barcodes.get(0).getDisplayValue(), Toast.LENGTH_LONG).show();
-            //finish();
-            //closeCamera();
-
             al.add(barcodes.get(0).getDisplayValue());
             addProduct(barcodes.get(0).getDisplayValue());
-//            Toast.makeText(this, x, Toast.LENGTH_SHORT).show();
-            //finish();
-            //closeCamera();
         }
 
         //tv.setText(al.toString());
