@@ -70,18 +70,29 @@ public class Login extends AppCompatActivity {
         loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                progressBar.setVisibility(View.VISIBLE);
+                //progressBar.setVisibility(View.VISIBLE);
                 String email=emailText.getText().toString();
                 String pass=passwordText.getText().toString();
 
                 if(TextUtils.isEmpty(email))
                 {
                     Toast.makeText(Login.this,"Enter Email",Toast.LENGTH_SHORT).show();
+                    emailText.setText("");
+                    emailText.requestFocus();
+                    return;
+                }
+                if(!email.contains("@")|| !email.contains("."))
+                {
+                    Toast.makeText(Login.this,"Enter Valid Email",Toast.LENGTH_SHORT).show();
+                    emailText.setText("");
+                    emailText.requestFocus();
                     return;
                 }
                 if(TextUtils.isEmpty(pass))
                 {
                     Toast.makeText(Login.this,"Enter Password",Toast.LENGTH_SHORT).show();
+                    passwordText.setText("");
+                    passwordText.requestFocus();
                     return;
                 }
 
@@ -89,7 +100,7 @@ public class Login extends AppCompatActivity {
                         .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
-                                progressBar.setVisibility(View.GONE);
+                                //progressBar.setVisibility(View.GONE);
                                 if (task.isSuccessful()) {
                                     // Sign in success, update UI with the signed-in user's information
 
@@ -103,9 +114,28 @@ public class Login extends AppCompatActivity {
 
                                 } else {
                                     // If sign in fails, display a message to the user.
+                                    Exception e=task.getException();
+                                    if(e!=null)
+                                    {
+                                        if(e instanceof com.google.firebase.auth.FirebaseAuthInvalidUserException )
+                                        {
+                                        Toast.makeText(Login.this, "Invalid username." + e.getMessage(),
+                                                Toast.LENGTH_SHORT).show();
+                                        }
+                                        else if(e instanceof com.google.firebase.auth.FirebaseAuthInvalidCredentialsException) {
+                                            Toast.makeText(Login.this, "Credentials are invalid",
+                                                    Toast.LENGTH_SHORT).show();
+                                        }
 
-                                    Toast.makeText(Login.this, "Authentication failed.",
-                                            Toast.LENGTH_SHORT).show();
+                                        else {
+                                            Toast.makeText(Login.this, "Authentication failed." + e.getMessage(),
+                                                    Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                    else
+                                    {
+                                        Toast.makeText(Login.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
+                                    }
 
                                 }
                             }

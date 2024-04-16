@@ -36,6 +36,7 @@ public class OrderListFragment extends Fragment{
 
     public static OrderListFragment newInstance (){
         OrderListFragment fragment = new OrderListFragment();
+
         /*fragment.mAdapter=mAdapter;*/
         return fragment;
     }
@@ -54,7 +55,7 @@ public class OrderListFragment extends Fragment{
     public void updateUI(){
        System.out.println("Updating the list"+MainActivity.mOrder.getOrder().size());
         List<Product> mOrder = MainActivity.mOrder.getOrder();
-        if (mAdapter == null) {
+        if (mAdapter == null || mOrder.size()==0) {
             System.out.println("ADD called");
 
             mAdapter = new OrderAdapter(getActivity(), mOrder);

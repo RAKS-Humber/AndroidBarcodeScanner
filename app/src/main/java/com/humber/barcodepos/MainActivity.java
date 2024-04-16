@@ -8,10 +8,13 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.camera.core.CameraSelector;
 import androidx.camera.core.ImageAnalysis;
 import androidx.camera.core.ImageProxy;
@@ -39,6 +42,7 @@ import com.humber.barcodepos.fragment.OrderListFragment;
 import com.humber.barcodepos.models.Order;
 import com.humber.barcodepos.models.Product;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
@@ -75,9 +79,17 @@ public class MainActivity extends FragmentActivity {
 
     private Context context;
 
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //requestWindowFeature(Window.FEATURE_NO_TITLE);
+        //this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+
         mAuth=FirebaseAuth.getInstance();
         user=mAuth.getCurrentUser();
         if(user==null)
@@ -89,17 +101,18 @@ public class MainActivity extends FragmentActivity {
         setContentView(R.layout.activity_main);
         context = this;
         previewView = findViewById(R.id.previewView);
-//        logoutBtn=findViewById(R.id.logoutBtn);
-//
-//        logoutBtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                FirebaseAuth.getInstance().signOut();
-//                Intent intent=new Intent(getApplicationContext(), Login.class);
-//                startActivity(intent);
-//                finish();
-//            }
-//        });
+        //tv=findViewById(R.id.textView);
+        logoutBtn=findViewById(R.id.logoutBtn);
+
+        logoutBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FirebaseAuth.getInstance().signOut();
+                Intent intent=new Intent(getApplicationContext(), Login.class);
+                startActivity(intent);
+                finish();
+            }
+        });
         FragmentManager fm = getSupportFragmentManager();
         fragment = (OrderListFragment) fm.findFragmentById(R.id.fragment_container);
         if (fragment == null) {
@@ -113,9 +126,16 @@ public class MainActivity extends FragmentActivity {
         btn_checkout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, CheckoutActivity.class);
-//            intent.putExtra(EXTRA_CRIME_ID, mCrime.getId());
+                //Intent intent = new Intent(MainActivity.this, CheckoutActivity.class);
+                //startActivity(intent);
+
+
+                Intent intent=new Intent(getApplicationContext(), ViewPaymentDetailsActivity.class);
+                Bundle extra = new Bundle();
+                List<Product> products=mOrder.getOrder();
+                intent.putExtra("productList", (Serializable) products);
                 startActivity(intent);
+
             }
         });
     }
